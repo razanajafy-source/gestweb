@@ -2,6 +2,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.sql.*" %> 
 <% 
+    
     if(request.getParameter("submit")!=null)
     {
         String num = request.getParameter("numint");
@@ -14,11 +15,10 @@
 
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 con = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestion","root","333");
-                pst = con.prepareStatement("update intervenant set num_int = ?,nom = ?, tho = ? where num_int = ?");
-                pst.setString(1, num);
-                pst.setString(2, nom);
-                pst.setString(3, tx);
-                pst.setString(4, num);
+                pst = con.prepareStatement("update intervenant set nom = ?,tho = ? where num_int = ?");
+                pst.setString(1, nom);
+                pst.setString(2, tx);
+                pst.setString(3, num);
                 pst.executeUpdate();
                 //JOptionPane.showMessageDialog(null, "save");
                 
@@ -61,8 +61,7 @@
                           </li>
                         </ul>
                         <form class="d-flex" role="search">
-                          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                          <button class="btn btn-outline-success" type="submit">Search</button>
+                          <input class="form-control me-2" name="find" id="find" type="search" placeholder="Search" aria-label="Search">
                         </form>
                       </div>
                     </div>
@@ -95,11 +94,11 @@
                         <label for="floatingInput">N° intervenant</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" name="nomint" value="<%= rs.getString("nom")%>" required id="floatingInput" placeholder="Nom">
+                        <input type="text" class="form-control" name="nom" value="<%= rs.getString("nom")%>" required id="floatingInput" placeholder="Nom">
                        <label for="floatingInput">Nom intervenant</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="number" class="form-control" name="taux" value="<%=rs.getString("tho")%>" required id="floatingInput" placeholder="heure">
+                        <input type="number" class="form-control" name="taux" value="<%= rs.getString("tho")%>" required id="floatingInput" placeholder="Heures">
                        <label for="floatingPassword">Taux horaire</label>
                     </div>
                     <div class="row mb-3">
@@ -113,12 +112,12 @@
                                 JOptionPane.showMessageDialog(null, e);
                             }
                             %> 
-                  <button type="submit" value="submit" name="submit" id="submit" class="btn btn-primary"><span><img src="../img/user-plus.png" width="25" height="height" alt="alt"/></span> Ajouter</button>
+                  <button type="submit" value="submit" name="submit" id="submit" class="btn btn-primary"><span><img src="../img/edit.png" width="25" height="height" alt="alt"/></span> Modifier</button>
                 </form>
             </div>
             </div>
             <div class="col-sm-8">
-                <table  class="table" >
+                <table  class="table" id="tb" >
                     <thead>
                         <tr>
                             <th class="table-success" scope="col">N° intervenant</th>
@@ -141,7 +140,7 @@
                             {
                                String numi = rs.getString("num_int");
                         %>
-                        <tr>
+                        <tr id="tr">
                             <td><a href="pres.jsp"><%=rs.getString("num_int") %></a></td>
                             <td><%=rs.getString("nom") %></td>
                             <td><%=rs.getString("tho") %></td>
@@ -161,6 +160,16 @@
 
             
         </div>
-        
-    </body>
+<script src="../bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="../bootstrap/jquery-3.5.1.min.js" type="text/javascript"></script>
+     <script type="text/javascript">
+      $(document).ready(function(){
+        $("#find").on("keyup", function(){
+          var value = $(this).val().toLowerCase();
+          $("#tb #tr").filter(function(){
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        });
+      });
+    </script>     </body>
 </html>

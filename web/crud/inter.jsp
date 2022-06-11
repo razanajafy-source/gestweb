@@ -64,8 +64,7 @@
                           </li>
                         </ul>
                         <form class="d-flex" role="search">
-                          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                          <button class="btn btn-outline-success" type="submit">Search</button>
+                            <input class="form-control me-2" name="find" id="find" type="search" placeholder="Search" aria-label="Search">
                         </form>
                       </div>
                     </div>
@@ -99,7 +98,7 @@
             </div>
             </div>
             <div class="col-sm-8">
-                <table  class="table" >
+                <table  class="table" id="tb">
                     <thead>
                         <tr>
                             <th class="table-success" scope="col">N° intervenant</th>
@@ -115,6 +114,7 @@
                             ResultSet rs;
                             Class.forName("com.mysql.cj.jdbc.Driver");
                             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestion","root","333");
+                            String fd = request.getParameter("find");
                             String query = "select * from intervenant";
                             Statement st = con.createStatement();
                             rs =  st.executeQuery(query);
@@ -122,7 +122,7 @@
                             {
                                String numi = rs.getString("num_int");
                         %>
-                        <tr>
+                        <tr id="tr">
                             <td><a href="pres.jsp?id=<%=numi%>"><%=rs.getString("num_int") %></a></td>
                             <td><%=rs.getString("nom") %></td>
                             <td><%=rs.getString("tho") %></td>
@@ -134,7 +134,11 @@
                         <%
 
                           }
-                         %>  
+                         %>
+                         
+                         
+                         
+                         
                     </tbody>
                 </table>
 
@@ -144,4 +148,16 @@
         </div>
         
     </body>
+    <script src="../bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="../bootstrap/jquery-3.5.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $("#find").on("keyup", function(){
+          var value = $(this).val().toLowerCase();
+          $("#tb #tr").filter(function(){
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        });
+      });
+    </script>
 </html>

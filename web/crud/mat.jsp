@@ -66,8 +66,7 @@
                                   </li>
                                 </ul>
                                 <form class="d-flex" role="search">
-                                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                                  <button class="btn btn-outline-success" type="submit">Search</button>
+                                    <input class="form-control me-2" name="find" id="find" type="search" placeholder="Search" aria-label="Search">
                                 </form>
                             </div>
                         </div>
@@ -105,12 +104,12 @@
                     </div>
                   
                     
-                  <button type="submit" value="submit" name="submit" id="submit" class="btn btn-primary">Ajouter</button>
+                  <button type="submit" value="submit" name="submit" id="submit" class="btn btn-primary"><span><img src="../img/plus.png" width="25" height="height" alt="alt"/></span>Ajouter</button>
                 </form>
             </div>
             </div>
             <div class="col-sm-8">
-                <table  class="table" >
+                <table  class="table" id="tb" >
                     <thead>
                         <tr>
                             <th class="table-success" scope="col">N°Materiel</th>
@@ -134,7 +133,7 @@
                             {
                                String numi = rs.getString("num_mat");
                         %>
-                        <tr>
+                        <tr id="tr">
                             <td><%=rs.getString("num_mat") %></td>
                             <td><%=rs.getString("des") %></td>
                             <td><%=rs.getString("car") %></td>
@@ -155,6 +154,17 @@
 
             
         </div>
-        
+    <script src="../bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="../bootstrap/jquery-3.5.1.min.js" type="text/javascript"></script>
+     <script type="text/javascript">
+      $(document).ready(function(){
+        $("#find").on("keyup", function(){
+          var value = $(this).val().toLowerCase();
+          $("#tb #tr").filter(function(){
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        });
+      });
+    </script>    
     </body>
 </html>

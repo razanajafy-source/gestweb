@@ -1,14 +1,15 @@
 <%@page import="javax.swing.JOptionPane"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.sql.*" %> 
-
 <% 
+
     if(request.getParameter("submit")!=null)
     {
-        String numa = request.getParameter("numat");
         String numi = request.getParameter("numint");
-        String dat = request.getParameter("date");
+        String numa = request.getParameter("numat");
+        String dt = request.getParameter("date");
         String hr = request.getParameter("nbh");
+       
         try {
                 Connection con;
                 PreparedStatement pst;
@@ -16,50 +17,63 @@
 
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 con = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestion","root","333");
-                pst = con.prepareStatement("update entretien set num_mat = ?, num_int = ?, date = ?, nbh = ? where num_mat = ? and num_int = ?");
-                pst.setString(1, numa);
-                pst.setString(2, numi);
-                pst.setString(3, dat);
+                String requet = "update into entretien date = ?, nbh =? where num_int = ? and num_mat = ? and date = ?";
+                pst = con.prepareStatement(requet);
+                pst.setString(1, numi);
+                pst.setString(2, numa);
+                pst.setString(3, dt);
                 pst.setString(4, hr);
-                pst.setString(5, numa);
-                pst.setString(6, numi);
-                pst.executeUpdate();
+                pst.execute();
                 //JOptionPane.showMessageDialog(null, "save");
                 
             }catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+            
+            JOptionPane.showMessageDialog(null, "L'entretien est exist deja");
             }
-              %> 
-        <script>   
-            window.location.replace("entre.jsp");       
-        </script> 
-     
-    <%             
+    }else{
+        
     }
-
-%>
+   %>
 
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title> 
-        
-         <link href="../bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css"/>
         <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        
-        
-        
+        <link href="../bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css"/>
     </head>
-    <body>
-        <h1>Student Update</h1>
-        
-        
-        <div class="card">
-            <div class="card-body  ">
-                <form  method="POST" action="#" >
-                    <%   
-                        try {
+    <body  >
+        <div class="row">
+            <div>
+                <div class="shadow mb-3 bg-body">
+                    <nav class="navbar navbar-expand-sm bg-info">
+                        <div class="container-fluid">
+                                <img src="../img/quest-ce-que-audit-informatique--scaled.jpeg" alt="icon" style="width: 70px"/>
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                  <li class="nav-item">
+                                    <a class="nav-link active alert-link" href="entre.jsp">ENTRETIEN</a>
+                                  </li>
+                                  <li class="nav-item">
+                                    <a class="nav-link" href="inter.jsp">INTERVENANT</a>
+                                  </li>
+                                  <li class="nav-item">
+                                    <a class="nav-link" href="mat.jsp">MATERIEL</a>
+                                  </li>
+                                </ul>
+                                <form class="d-flex" role="search">
+                                    <input class="form-control me-2" name="find" id="find" type="search" placeholder="Search" aria-label="Search">
+                                </form>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            <div class="card" style="width: 24rem; height: 30rem">
+            <img src="../img/Maintenance-informatique-préventive.jpg" class="card-img-top" alt="Metier">
+            <div class="card-body">
+              <h5 class="card-title">Intervenant</h5>
+              <form method="POST" action="#">
+                  <% try {
                         
                             Connection con;
                             PreparedStatement pst;
@@ -67,55 +81,149 @@
                             Class.forName("com.mysql.cj.jdbc.Driver");
                             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestion","root","333");
                             String numi = request.getParameter("id");
-                            String numa = request.getParameter("id1");
-                            pst = con.prepareStatement("select * from entretien where num_mat = ? and num_int = ?");
-                            pst.setString(1, numa);
-                            pst.setString(2, numi);
+                            String mat = request.getParameter("id1");
+                            String dt = request.getParameter("id2");
+                            pst = con.prepareStatement("select * from entretien where num_int = ? and num_mat = ? and date = ?");
+                            pst.setString(1, numi);
+                            pst.setString(2, mat);
+                            pst.setString(3, dt);
                             rs = pst.executeQuery();
                             while(rs.next())
                             {
 
+                       %>
+                        <div class="form-label">
+                        <label class="form-label">N°Intervenant</label>
+                        <select name="numint" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                        <%  
+                        try {
+                              Class.forName("com.mysql.cj.jdbc.Driver");
+                              con = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestion","root","333");
+                              String sql1 = "select * from intervenant";
+                              pst = con.prepareStatement(sql1);
+                              rs = pst.executeQuery();
+
+                              while(rs.next()){
                                 %>
-                                <div>
-                                    <label class="form-label">N° materiel</label>
-                                    <input type="text" class="form-control"  name="numat" value="<%= rs.getString("num_mat")%>" required Disabled >
-                                </div>
+                                 <option><%= rs.getString("num_int")%></option>
+                                <%
+                              }
+                          }catch (Exception e) {
 
-                                <div>
-                                    <label class="form-label">N° Intervenant</label>
-                                    <input type="text" class="form-control"  name="numint" value="<%= rs.getString("num_int")%>" required Disabled >
-                                </div>
+                              JOptionPane.showMessageDialog(null, e);
+                          }
+                        %>
+                   
+                        </select>
+                    </div>
+                    <div class="form-label">
+                        <label class="form-label">N°Materiel</label>
+                        <select name="numat" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                        <%  
+                        try {
+                             
 
-                                <div>
-                                    <label class="form-label">Date</label>
-                                    <input type="text" class="form-control" name="date" id="taux" value="<%= rs.getString("date")%>" required >
-                                </div>
-                                <div>
-                                    <label class="form-label">Heures</label>
-                                    <input type="text" class="form-control" name="nbh" id="taux" value="<%= rs.getString("nbh")%>" required >
-                                </div>
-                                
+                              Class.forName("com.mysql.cj.jdbc.Driver");
+                              con = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestion","root","333");
+                              String sql1 = "select * from materiel";
+                              pst = con.prepareStatement(sql1);
+                              rs = pst.executeQuery();
 
-                            <% 
-                            }
-                                }catch (Exception e) {
-            
-                                JOptionPane.showMessageDialog(null, e);
-                            }
-                            %> 
-                         </br>
-                         
-                     <div>
-                         <input type="submit" id="submit" value="submit" name="submit" class="btn btn-info">
-                         <input type="reset" id="reset" value="reset" name="reset" class="btn btn-warning">
-                     </div>  
-                         <div align="right">
-                             <p><a href="index.jsp">Click Back</a></p>
-                         </div>
-  
+                              while(rs.next()){
+                                %>
+                                 <option><%=rs.getString("num_mat")%></option>
+                                <%
+                              }
+                          }catch (Exception e) {
+
+                              JOptionPane.showMessageDialog(null, e);
+                          }
+                        %>
+                   
+                        </select>
+                    </div>
+                    <div class="form-floating mb-3">
+                       <input type="date" class="form-control" name="date" id="floatingInput" placeholder="Nom">
+                       <label for="floatingInput">Date</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" name="nbh" id="floatingInput" placeholder="heure">
+                       <label for="floatingPassword">Nbr Heures</label>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-10 offset-sm-2">
+                        </div>
+                    </div>
+                   <%
+                       }
+                       }catch (Exception e) {
+
+                              JOptionPane.showMessageDialog(null, e);
+                          }
+%>
+                  <button type="submit" value="submit" name="submit" id="submit" class="btn btn-primary">Ajouter</button>
                 </form>
-              </div>
-            </div>          
-  
+            </div>
+            </div>
+            <div class="col-sm-8">
+                <table  class="table" id="tb" >
+                    <thead>
+                        <tr>
+                            <th class="table-success" scope="col">N°Intervenant</th>
+                            <th class="table-success" scope="col">Nom</th>
+                            <th class="table-success" scope="col">N°Materiel</th>
+                            <th class="table-success" scope="col">Date</th>
+                            <th class="table-success" scope="col">Heures</th>
+                            <th class="table-success" scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%   
+                            Connection con;
+                            PreparedStatement pst;
+                            ResultSet rs;
+                            Class.forName("com.mysql.cj.jdbc.Driver");
+                            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestion","root","333");
+                            String query = "select * from entretien,intervenant where intervenant.num_int=entretien.num_int";
+                            Statement st = con.createStatement();
+                            rs =  st.executeQuery(query);
+                            while(rs.next())
+                            {
+                               String numi = rs.getString("num_int");
+                               String numa = rs.getString("num_mat");
+                               String datent = rs.getString("date");
+                        %>
+                        <tr id="tr">
+                            <td><%=rs.getString("num_int") %></td>
+                            <td><%=rs.getString("nom") %></td>
+                            <td><%=rs.getString("num_mat") %></td>
+                            <td><%=rs.getString("date") %></td>
+                            <td><%=rs.getString("nbh") %></td>
+                            <td><a href="delent.jsp?id=<%=numi%>&&id1=<%=numa%>&&id2=<%=datent%>"><span><img src="../img/trash.png" width="25"/></span></a></td>
+                        </tr> 
+                        <%
+
+                          }
+                         %>  
+                    </tbody>
+                </table>
+
+            </div>
+
+            
+        </div>
+                    
+    <script src="../bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="../bootstrap/jquery-3.5.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $("#find").on("keyup", function(){
+          var value = $(this).val().toLowerCase();
+          $("#tb #tr").filter(function(){
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        });
+      });
+    </script>    
     </body>
 </html>
